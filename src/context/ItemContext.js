@@ -11,6 +11,8 @@ const ItemReducer = (state, action) => {
             return { ...state, stockList: action.payload }
         case 'loadStockByWH':
             return { ...state, stockListByWH: action.payload }
+        case 'loadData':
+            return { ...state, isLoadData: action.payload, stockList: null, stockListByWH: null }
     }
 }
 
@@ -20,6 +22,10 @@ const loadItem = dispatch => async () => {
         // console.log('repsonse item ', response.data.data)
         dispatch({ type: 'loadItem', payload: response.data.data })
     }
+}
+
+const loadData = dispatch => async (isLoadData) => {
+    dispatch({ type: 'loadData', payload: isLoadData })
 }
 
 const loadStockWH = dispatch => async () => {
@@ -36,7 +42,7 @@ const loadStockWH = dispatch => async () => {
             resultStock.forEach(stock => {
                 if (stock.item_id === item.id) {
                     const qty = getQtyStock(resultUnit, item.id, stock.qty)
-                    result.push({ id: item.id, wh_id: stock.wh_id.toString(), code: item.code, name: item.name1, qty: qty })
+                    result.push({ id: item.id, wh_id: stock.wh_id.toString(), code: item.code, name: item.name1, qty: qty, pid: stock.pid })
                 }
             })
         })
@@ -90,8 +96,8 @@ const getQtyStock = (resultUnit, item_id, qty) => {
 export const { Context, Provider } = createDataContext(
     ItemReducer,
     {
-        // loadItem,
+        loadData,
         loadStockWH
     },
-    { itemList: null, stockList: null, stockListByWH: null }
+    { itemList: null, stockList: null, stockListByWH: null, isLoadData: false }
 )

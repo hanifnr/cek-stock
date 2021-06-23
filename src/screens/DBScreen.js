@@ -28,8 +28,6 @@ const DBScreen = (props) => {
         }
     }, [dblist])
 
-    console.log('dblist', dblist)
-
     const onChooseDB = (item) => {
         setLoading(true)
         setLoadingText('Sedang memproses data...')
@@ -39,6 +37,7 @@ const DBScreen = (props) => {
             () => {
                 loadWH()
                 props.navigation.navigate('Setting')
+                setLoading(false)
             }
         )
     }

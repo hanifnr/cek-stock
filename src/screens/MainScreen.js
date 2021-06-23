@@ -11,7 +11,7 @@ import BDialog from '../component/dialog/BDialog'
 import { dimension } from '../helper/sizes'
 
 const MainScreen = ({ navigation }) => {
-    const { state: itemState, loadStockWH } = useContext(ItemContext)
+    const { state: itemState, loadStockWH, isLoadData } = useContext(ItemContext)
     const { state: whState, loadWH } = useContext(WHContext)
     const { stockListByWH, stockList } = itemState
     const { whList } = whState
@@ -23,6 +23,9 @@ const MainScreen = ({ navigation }) => {
     const [searchText, setSearchText] = useState('')
 
     useEffect(() => {
+        const focus = navigation.addListener('focus', () => {
+            loadData()
+        })
         async function fetchProfile() {
             const cmpname = await AsyncStorage.getItem('cmpname')
             setCmpname(cmpname)
@@ -32,7 +35,7 @@ const MainScreen = ({ navigation }) => {
         }, 100)
         fetchProfile()
         loadData()
-    }, [])
+    }, [isLoadData])
 
     const loadData = () => {
         loadStockWH()
@@ -40,10 +43,10 @@ const MainScreen = ({ navigation }) => {
         doSearch(searchText)
     }
 
-    const getListItemWH = (item_id) => {
+    const getListItemWH = (item_id, pid) => {
         const result = []
         const resultStock = stockList.filter(stock =>
-            stock.id.toString() === item_id.toString()
+            stock.id.toString() === item_id.toString() && (pid.length === 0 || stock.pid === pid)
         )
         resultStock.forEach(stock => {
             whList.forEach(wh => {
@@ -115,6 +118,7 @@ const MainScreen = ({ navigation }) => {
                                 data={searchResult ? searchResult : stockListByWH}
                                 keyExtractor={item => item.id}
                                 renderItem={({ item, index }) => {
+                                    const name = item.pid.length > 0 ? item.name + " - " + item.pid : item.name
                                     return (
                                         <>
                                             {index === 0 ?
@@ -126,11 +130,11 @@ const MainScreen = ({ navigation }) => {
                                             }
                                             <ItemView
                                                 code={item.code}
-                                                name={item.name}
+                                                name={name}
                                                 stock={item.qty}
                                                 onDetail={() => {
                                                     setItem(item)
-                                                    getListItemWH(item.id)
+                                                    getListItemWH(item.id, item.pid)
                                                     setShowDialog(true)
                                                 }} />
                                         </>
@@ -150,7 +154,13 @@ const MainScreen = ({ navigation }) => {
                     <View style={styles.containerDialog}>
                         <View style={styles.itemDialogView}>
                             <Text style={styles.txtDetail}>{item ? item.code : null}</Text>
-                            <Text style={styles.txtDetail}>{item ? item.name : null}</Text>
+                            <Text style={styles.txtDetail}>
+                                {item ?
+                                    item.pid.length > 0 ?
+                                        item.name + " - " + item.pid :
+                                        item.name
+                                    : null}
+                            </Text>
                         </View>
                         <View style={styles.itemDialogView}>
                             <Text style={styles.txtHeader}>Gudang</Text>

@@ -13,7 +13,7 @@ const BDropDown = (props) => {
 
     useEffect(() => {
         setItems(itemsConvert)
-    }, [])
+    }, [props.items])
 
     return (
         <View style={{ marginBottom: 10 }}>

@@ -12,7 +12,7 @@ const SplashScreen = (props) => {
         }, 100)
     }, [])
 
-    LogBox.ignoreLogs(['VirtualizedList'])
+    LogBox.ignoreLogs(['VirtualizedList', 'Encountered'])
 
     const autoLogin = async () => {
         const apikey = await AsyncStorage.getItem('apikey')

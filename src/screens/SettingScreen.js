@@ -12,13 +12,17 @@ import AsyncStorage from '@react-native-community/async-storage'
 
 const SettingScreen = (props) => {
     const navigate = props.navigation.navigate
-    const { state } = useContext(WHContext)
-    const { loadItem } = useContext(ItemContext)
+    const { state, loadWH } = useContext(WHContext)
+    const { loadData } = useContext(ItemContext)
     const { whList } = state
     const [item, setItem] = useState(null)
     const [showErrorWH, setShowErrorWH] = useState(false)
 
     useEffect(() => {
+        const focus = props.navigation.addListener('focus', () => {
+            console.log('focus setting')
+            loadWH()
+        })
         setTimeout(() => {
             StatusBar.setBackgroundColor(primary);
         }, 100)
@@ -45,6 +49,7 @@ const SettingScreen = (props) => {
                         style={styles.button}
                         onPress={() => {
                             if (item) {
+                                loadData(true)
                                 setShowErrorWH(false)
                                 saveWH(item)
                                 navigate('Drawer')

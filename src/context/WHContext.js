@@ -5,6 +5,7 @@ import createDataContext from "./createDataContext"
 const WHReducer = (state, action) => {
     switch (action.type) {
         case 'load':
+            console.log('payload wh', action.payload)
             return { ...state, whList: action.payload }
     }
 }
