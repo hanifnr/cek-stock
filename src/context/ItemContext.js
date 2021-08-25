@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-community/async-storage"
+import { ToastAndroid } from "react-native"
 import { defaultApi } from "../api/BApi"
 import { RESPONSE_STATUS_OK } from "../helper/constants"
 import createDataContext from "./createDataContext"
@@ -29,6 +30,7 @@ const loadData = dispatch => async (isLoadData) => {
 }
 
 const loadStockWH = dispatch => async () => {
+    const startTime = Date.now()
     const whid = await AsyncStorage.getItem('whid')
     const responseStock = await defaultApi.get('stock')
     const responseItem = await defaultApi.get('item')
@@ -53,6 +55,9 @@ const loadStockWH = dispatch => async () => {
         console.log('resultByWH', resultByWH)
         dispatch({ type: 'loadStock', payload: result })
         dispatch({ type: 'loadStockByWH', payload: resultByWH })
+        const finishTime = Date.now()
+        const duration = Math.abs((finishTime - startTime) / 1000)
+        ToastAndroid.show(`${result.length} record loaded in ${duration} seconds`, ToastAndroid.LONG)
     }
 }
 

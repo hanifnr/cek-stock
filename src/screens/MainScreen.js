@@ -23,9 +23,9 @@ const MainScreen = ({ navigation }) => {
     const [searchText, setSearchText] = useState('')
 
     useEffect(() => {
-        const focus = navigation.addListener('focus', () => {
-            loadData()
-        })
+        // const focus = navigation.addListener('focus', () => {
+        //     loadData()
+        // })
         async function fetchProfile() {
             const cmpname = await AsyncStorage.getItem('cmpname')
             setCmpname(cmpname)
@@ -174,7 +174,7 @@ const MainScreen = ({ navigation }) => {
                                     return (
                                         <View style={styles.itemDialogView}>
                                             <Text style={styles.txtDetail}>{item.whname}</Text>
-                                            <Text style={styles.txtDetail}>{item.qty}</Text>
+                                            <Text style={[styles.txtDetail, isEmptyStock(item.qty) ? { color: 'red' } : { color: 'black' }]}>{item.qty}</Text>
                                         </View>
                                     )
                                 }}
@@ -203,12 +203,19 @@ const ItemView = ({ code, name, stock, onDetail }) => {
         <TouchableOpacity style={styles.itemView}>
             <Text style={[styles.txtDetail, { flex: 1.5 }]}>{code}</Text>
             <Text style={[styles.txtDetail, { flex: 4 }]}> {name}</Text>
-            <Text style={[styles.txtDetail, { flex: 2 }]}> {stock}</Text>
+            <Text style={[styles.txtDetail, { flex: 2 }, isEmptyStock(stock) ? { color: 'red' } : { color: 'black' }]}> {stock}</Text>
             <TouchableOpacity style={{ flex: 0.5 }} onPress={onDetail}>
                 <Icon type='Feather' name='eye' style={{ color: 'grey', fontSize: 20 }} />
             </TouchableOpacity>
         </TouchableOpacity>
     )
+}
+
+const isEmptyStock = (stock) => {
+    if (stock.substring(0, 1) === '0') {
+        return true
+    }
+    return false
 }
 
 const styles = StyleSheet.create({
